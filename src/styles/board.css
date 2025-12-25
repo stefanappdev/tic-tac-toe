@@ -1,0 +1,28 @@
+
+
+.boardsquare{
+    border: 1px solid white;
+    min-width: 100px;
+    min-height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    cursor: pointer;
+    background-color: skyblue;
+}
+
+#gameboard{
+    margin: 25px auto;
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    grid-template-rows: 33% 33% 33%;
+    max-width: 300px;
+}
+
+
+.notification{
+	margin:20px 0;
+	pading: 2px;
+	text-align: center;
+}
