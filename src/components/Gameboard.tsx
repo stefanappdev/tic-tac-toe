@@ -1,13 +1,15 @@
-import {useState} from 'react'
+import {useState,useRef} from 'react'
 import '../styles/board.css'
+//import {Player} from './interfaces/Player.tsx'
 
 const Gameboard=()=>{
 
-interface Player{
-	symbol:string,
-	iswinner:boolean
+ interface Player{
+  symbol:string,
+  iswinner:boolean
 }
 
+const squareRef=useRef(null)
 
 let Oplayer:Player={
 	symbol:'O',
@@ -57,29 +59,72 @@ const [squares,setSquares]=useState([
 
 
 
+let winningSquares={
+	across:[[1,2,3],[4,5,6],[7,8,9]],
+	diagonal:[[1,5,9],[3,5,7]],
+}
+
+
+const handleStart=():void=>{
+	
+	setHasStarted(true);
+	
+}
+
+
+
+
+const handleReset=():void=>{
+	setHasStarted(false);
+	squares.map(sq=>sq.data='');
+	setSquares(prevSquares=>[...prevSquares])
+	setPlayer(Xplayer)
+}
+
+
+const handleSquareUpdate=(id:number)=>{
+		let target=squares.map(sq=>{
+			if(sq.id!==id){
+				return
+			}else{
+
+			if(sq.data===''){
+					sq.data=player.symbol;
+					
+					if(player.symbol==='X'){
+						player.myturn=false;
+						setPlayer(Oplayer)
+					}else{
+						setPlayer(Xplayer)
+					}
+
+			}else{
+				return
+			}
+
+			}
+		})
+	
+	setSquares(prevSquares=>[...prevSquares])
+
+
+}
+
+
 
  let boardSquares=squares.map(square=>{
 
- 	return <div key={square.id} className='boardsquare'>
+ 	return <div key={square.id} onClick={()=>handleSquareUpdate(square.id)} className='boardsquare'>
  		{square.data}		
 		</div>
 		
 		})
 
 
-const handleStart=()=>{
-	setHasStarted(true)
-}
-
-const handleReset=()=>{
-	setHasStarted(false)
-}
-
 let displayMsg=''
 
-if(player.myturn){
-	displayMsg=`Current player turn: ${player.symbol}`
-}
+displayMsg=`Current player turn: ${player.symbol==='X'?'X':'O'}`
+
 
 return <div id='gamespace'>
 
