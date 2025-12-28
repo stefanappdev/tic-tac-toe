@@ -6,7 +6,8 @@ const Gameboard=()=>{
 
  interface Player{
   symbol:string,
-  iswinner:boolean
+  iswinner:boolean,
+  squaresPlayed:integer[],
 }
 
 const squareRef=useRef(null)
@@ -14,18 +15,24 @@ const squareRef=useRef(null)
 let Oplayer:Player={
 	symbol:'O',
 	iswinner:false,
-	myturn:false
+	squaresPlayed:[]
 }
 
 let Xplayer:Player={
 	symbol:'X',
 	iswinner:false,
-	myturn:true
+	squaresPlayed:[]
+
 }
 
 
-const [player,setPlayer]=useState(Xplayer)
+const [currentPlayer,setCurrentPlayer]=useState(Xplayer)
+const[X_player,setXPlayer]=useState(Xplayer)
+const[O_player,setOPlayer]=useState(Oplayer)
+const[displayMsg,setDisplayMsg]=useState('')
+const [isTheWinner,setIsTheWinner]=useState(null)
 const [hasStarted,setHasStarted]=useState(false)
+const [boardisFull,setBoardisFull]=useState(false)
 const [squares,setSquares]=useState([
 {
 	id:1,data:''
@@ -59,26 +66,92 @@ const [squares,setSquares]=useState([
 
 
 
-let winningSquares={
-	across:[[1,2,3],[4,5,6],[7,8,9]],
-	diagonal:[[1,5,9],[3,5,7]],
-}
+let winningSets=[
+
+	[1,2,3],
+	[4,5,6],
+	[7,8,9],
+	[1,5,9],
+	[3,5,7],
+	[1,4,7],
+	[2,5,8],
+	[3,6,9]
+]
+
 
 
 const handleStart=():void=>{
-	
 	setHasStarted(true);
+	changePlayerTurn(X_player)
 	
+
+
 }
 
+
+const changePlayerTurn=(newPlayer:Player):void=>{
+
+	  let boardisFull:boolean=squares.every(sq=>sq.data!=='');
+
+	  if(!boardisFull){
+      setCurrentPlayer(newPlayer);
+      setDisplayMsg(`it's ${newPlayer.symbol}'s turn`)
+      }else if(boardisFull){
+      
+      		return
+      }
+}
+
+
+const checkwhoWon=():void=>{
+
+	
+	winningSets.forEach(winningSet=>{
+		if (winningSet.every(winningSq=>X_player.squaresPlayed.includes(winningSq))){
+			setIsTheWinner(X_player)
+			setDisplayMsg('X wins!')
+			}
+		})	
+
+
+	winningSets.forEach(winningSet=>{
+		if (winningSet.every(winningSq=>O_player.squaresPlayed.includes(winningSq))){
+			 setIsTheWinner(O_player)
+			 setDisplayMsg('O wins!')
+			}
+		})	
+			
+	
+	
+	if(isTheWinner===null){
+
+		currentPlayer===O_player?changePlayerTurn(X_player):changePlayerTurn(O_player)
+	}
+	
+}
 
 
 
 const handleReset=():void=>{
 	setHasStarted(false);
+	setDisplayMsg('')
 	squares.map(sq=>sq.data='');
 	setSquares(prevSquares=>[...prevSquares])
-	setPlayer(Xplayer)
+	setIsTheWinner(null)
+	setOPlayer(prevOplayerState=>{
+		return{
+			...prevOplayerState,
+			squaresPlayed:[]
+		}
+	})
+
+	setXPlayer(prevXplayerState=>{
+		return{
+			...prevXplayerState,
+			squaresPlayed:[],
+		}
+	})
+
 }
 
 
@@ -89,13 +162,26 @@ const handleSquareUpdate=(id:number)=>{
 			}else{
 
 			if(sq.data===''){
-					sq.data=player.symbol;
+					sq.data=currentPlayer.symbol;
 					
-					if(player.symbol==='X'){
-						player.myturn=false;
-						setPlayer(Oplayer)
+					if(currentPlayer.symbol==='X'){
+						
+						setXPlayer(prevXplayerState=>{
+
+							let cpy=[...prevXplayerState['squaresPlayed'],sq.id]
+
+							return {...prevXplayerState,squaresPlayed:cpy}
+						})
+
+						
 					}else{
-						setPlayer(Xplayer)
+						
+						setOPlayer(prevOplayerState=>{
+							let cpy=[...prevOplayerState['squaresPlayed'],sq.id]
+
+							return {...prevOplayerState,squaresPlayed:cpy}
+						})
+
 					}
 
 			}else{
@@ -104,8 +190,11 @@ const handleSquareUpdate=(id:number)=>{
 
 			}
 		})
-	
+
 	setSquares(prevSquares=>[...prevSquares])
+	
+	
+	checkwhoWon()
 
 
 }
@@ -121,15 +210,14 @@ const handleSquareUpdate=(id:number)=>{
 		})
 
 
-let displayMsg=''
 
-displayMsg=`Current player turn: ${player.symbol==='X'?'X':'O'}`
+
 
 
 return <div id='gamespace'>
 
  
- 	{hasStarted&&<h1 className='notification'>{displayMsg}</h1>}
+ 	{displayMsg?<h1 className='notification'>{displayMsg}</h1>:''}
 
 	{hasStarted&& <div id='gameboard'>{boardSquares}</div>}
 
