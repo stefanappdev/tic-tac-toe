@@ -6,33 +6,32 @@ const Gameboard=()=>{
 
  interface Player{
   symbol:string,
-  iswinner:boolean,
-  squaresPlayed:integer[],
+  squaresPlayed:number[],
 }
 
-const squareRef=useRef(null)
 
-let Oplayer:Player={
-	symbol:'O',
-	iswinner:false,
-	squaresPlayed:[]
-}
+	let X:Player={
+		symbol:'X',
+		squaresPlayed:[],
+	}
 
-let Xplayer:Player={
-	symbol:'X',
-	iswinner:false,
-	squaresPlayed:[]
 
-}
+	let O:Player={
+		symbol:'O',
+		squaresPlayed:[],
 
+	}
+
+const[gameStart,setGameStart]=useState(false)
+const [gameEnd,setGameEnd]=useState(false)
+const[displayMsg,setDisplayMsg]=useState(false)
+const[theWinner,setTheWinner]=useState(null)
+const[Xplayer,setXPlayer]=useState(X)
+
+const[Oplayer,setOPlayer]=useState(O)
 
 const [currentPlayer,setCurrentPlayer]=useState(Xplayer)
-const[X_player,setXPlayer]=useState(Xplayer)
-const[O_player,setOPlayer]=useState(Oplayer)
-const[displayMsg,setDisplayMsg]=useState('')
-const [isTheWinner,setIsTheWinner]=useState(null)
-const [hasStarted,setHasStarted]=useState(false)
-const [boardisFull,setBoardisFull]=useState(false)
+
 const [squares,setSquares]=useState([
 {
 	id:1,data:''
@@ -81,120 +80,183 @@ let winningSets=[
 
 
 const handleStart=():void=>{
-	setHasStarted(true);
-	changePlayerTurn(X_player)
-	
+
+//controls action of game on startup
+
+setGameStart(true)
+setDisplayMsg(`Its ${currentPlayer.symbol}'s turn`)
 
 
 }
 
 
-const changePlayerTurn=(newPlayer:Player):void=>{
+const changePlayerTurn=():void=>{
 
-	  let boardisFull:boolean=squares.every(sq=>sq.data!=='');
+	//changes player turns 
+    if(theWinner===null){
+		  if(currentPlayer.symbol==='O'){
+		  	 setCurrentPlayer(Xplayer)
+		  	setDisplayMsg(`Its X's turn`)
+		  }else if(currentPlayer.symbol==='X'){
+		  	setCurrentPlayer(Oplayer)
+		  	setDisplayMsg(`Its O's turn`)
+		  }
+	} 
 
-	  if(!boardisFull){
-      setCurrentPlayer(newPlayer);
-      setDisplayMsg(`it's ${newPlayer.symbol}'s turn`)
-      }else if(boardisFull){
-      
-      		return
-      }
+
+
 }
 
 
-const checkwhoWon=():void=>{
-
 	
-	winningSets.forEach(winningSet=>{
-		if (winningSet.every(winningSq=>X_player.squaresPlayed.includes(winningSq))){
-			setIsTheWinner(X_player)
-			setDisplayMsg('X wins!')
-			}
-		})	
-
-
-	winningSets.forEach(winningSet=>{
-		if (winningSet.every(winningSq=>O_player.squaresPlayed.includes(winningSq))){
-			 setIsTheWinner(O_player)
-			 setDisplayMsg('O wins!')
-			}
-		})	
-			
-	
-	
-	if(isTheWinner===null){
-
-		currentPlayer===O_player?changePlayerTurn(X_player):changePlayerTurn(O_player)
+const congratulate=():void=>{
+	//congratulates the winner
+	if(theWinner!==null){
+	setDisplayMsg(`${theWinner.symbol} won`)
+	setGameEnd(true)
 	}
-	
+
+}
+
+
+ const gameDraw=():boolean=>{
+  	//checks for draw in a match
+
+  	if( squares.every(sq=>sq.data!=='') ){
+  		return true
+  	}
+
+  	return false
+  } 
+
+
+
+
+const foundAWinner=():boolean=>{
+  
+ //checks for a winner if theres any
+ let foundwinner:boolean=false;
+
+
+
+
+
+  	winningSets.forEach(winningSet=>{
+
+  		let matchedsquares=squares.filter(matchedsq=>winningSet.includes(matchedsq.id))
+  		if( matchedsquares.every(matchedsq=>matchedsq.data==='O') ){
+  			
+  			foundwinner=true
+  			
+  			
+  		}else if( matchedsquares.every(matchedsq=>matchedsq.data==='X') ){
+  		
+  			foundwinner=true
+  			
+  		}
+  	})
+
+    return foundwinner
 }
 
 
 
 const handleReset=():void=>{
-	setHasStarted(false);
-	setDisplayMsg('')
-	squares.map(sq=>sq.data='');
+
+	//performs reset of game 
+	setGameStart(false)
+	setGameEnd(false)
+	setDisplayMsg("")
+	setCurrentPlayer(Xplayer)
+	setTheWinner(null)
+	squares.forEach(square=>{
+		square.data='';
+	})
 	setSquares(prevSquares=>[...prevSquares])
-	setIsTheWinner(null)
-	setOPlayer(prevOplayerState=>{
-		return{
-			...prevOplayerState,
-			squaresPlayed:[]
-		}
-	})
-
-	setXPlayer(prevXplayerState=>{
-		return{
-			...prevXplayerState,
-			squaresPlayed:[],
-		}
-	})
-
 }
 
 
-const handleSquareUpdate=(id:number)=>{
-		let target=squares.map(sq=>{
-			if(sq.id!==id){
-				return
-			}else{
+const handleBoardUpdate=(id:number)=>{
+		
+		//controls updating of square on tic-tac-toe board
+	    //allow players to play their symbols while game in progress
 
-			if(sq.data===''){
-					sq.data=currentPlayer.symbol;
-					
-					if(currentPlayer.symbol==='X'){
-						
-						setXPlayer(prevXplayerState=>{
 
-							let cpy=[...prevXplayerState['squaresPlayed'],sq.id]
 
-							return {...prevXplayerState,squaresPlayed:cpy}
+	const gameShouldContinue=():boolean=>{
+
+		/*stops the game if there's a winner or
+		if the game draws or continues unitl a winner is found*/
+
+		if (!foundAWinner()&&gameDraw()){
+				
+				setDisplayMsg("it's a draw")
+	  			setGameEnd(true)
+	  			setTheWinner(null)
+	  			return false
+				
+			}
+
+		else if(foundAWinner()){
+  
+				setDisplayMsg(`${currentPlayer.symbol} wins`)
+	  			setGameEnd(true)
+	  			setTheWinner(currentPlayer)
+	  			return false
+
+			}
+
+
+		return true
+	}
+
+    
+
+	if(gameStart&&!gameEnd){
+	
+	let square=squares.find(square=>square.id===id)
+
+      
+	if(square.data===''){
+
+					square.data=currentPlayer.symbol;
+					setSquares(prevSquares=>[...prevSquares])
+					if (currentPlayer.symbol==='X'){
+
+						changePlayerTurn()
+						let newsquaresPlayed=[...currentPlayer.squaresPlayed,square.id]
+						setXPlayer(prevXplayer=>{
+							return {...prevXplayer,squaresPlayed:newsquaresPlayed}
+
 						})
 
 						
-					}else{
-						
-						setOPlayer(prevOplayerState=>{
-							let cpy=[...prevOplayerState['squaresPlayed'],sq.id]
 
-							return {...prevOplayerState,squaresPlayed:cpy}
+						
+					}else if (currentPlayer.symbol==='O'){
+						changePlayerTurn()
+						let newsquaresPlayed=[...currentPlayer.squaresPlayed,square.id]
+						
+						setOPlayer(prevOplayer=>{
+							return {...prevOplayer,squaresPlayed:newsquaresPlayed}
 						})
+						
+						
 
 					}
 
-			}else{
-				return
-			}
+		}else{return}	
 
-			}
-		})
 
-	setSquares(prevSquares=>[...prevSquares])
-	
-	
-	checkwhoWon()
+
+     //check if game was won, drawed or if it should continue each time a square is clicked
+
+		if (!gameShouldContinue()){
+			return
+		}
+
+
+	}
 
 
 }
@@ -203,7 +265,7 @@ const handleSquareUpdate=(id:number)=>{
 
  let boardSquares=squares.map(square=>{
 
- 	return <div key={square.id} onClick={()=>handleSquareUpdate(square.id)} className='boardsquare'>
+ 	return <div key={square.id} onClick={()=>handleBoardUpdate(square.id)} className='boardsquare'>
  		{square.data}		
 		</div>
 		
@@ -219,9 +281,11 @@ return <div id='gamespace'>
  
  	{displayMsg?<h1 className='notification'>{displayMsg}</h1>:''}
 
-	{hasStarted&& <div id='gameboard'>{boardSquares}</div>}
+	{<div id='gameboard'>{boardSquares}</div>}
 
-    {hasStarted?<button onClick={handleReset}>reset</button>:<button onClick={handleStart}>start</button>}
+    {gameStart?<button onClick={handleReset}>reset</button>:""}
+
+    {!gameStart?<button onClick={handleStart}>start</button>:''}
 </div>
 
 }	
