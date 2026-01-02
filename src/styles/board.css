@@ -1,28 +1,131 @@
+/*phone*/
+@media screen and (min-width:300px){ 
+
+    .boardsquare{
+        border: 1px solid white;
+        min-width: 75px;
+        min-height: 75px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 50px;
+        cursor: pointer;
+        background-color: skyblue;
+    }
+
+    #gameboard{
+        margin: 25px auto;
+        display: grid;
+        grid-template-columns: 33% 33% 33%;
+        grid-template-rows: 33% 33% 33%;
+        max-width: 250px;
+    }
+
+    #gamespace{
+        padding: 20px 0;
 
 
-.boardsquare{
-    border: 1px solid white;
-    min-width: 100px;
-    min-height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 50px;
-    cursor: pointer;
-    background-color: skyblue;
+    }
+
+
+    .notification{
+        margin:20px 0;
+        pading: 2px;
+        text-align: center;
+
+    }
+
+    #board-controls{
+        margin: 10px 40%;
+        
+    }
+
+    .board-btn{
+        height:35px;
+        width:70px;
+        font-size: 16px;
+        font-weight: bold;
+        border-style:none ;
+        border-radius:5px ;
+        cursor: pointer;
+    }
+
+    #start-btn{
+        background-color:rgb(11, 145, 200);
+        color: white;
+    }
+
+     #reset-btn{
+        background-color:rgb(216, 51, 67);
+        color: white;
+    }
+
+
 }
 
-#gameboard{
-    margin: 25px auto;
-    display: grid;
-    grid-template-columns: 33% 33% 33%;
-    grid-template-rows: 33% 33% 33%;
-    max-width: 300px;
-}
+
+/*desktop*/
+
+@media screen and (min-width:700px){ 
+
+    .boardsquare{
+        border: 1px solid white;
+        min-width: 100px;
+        min-height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 50px;
+        cursor: pointer;
+        background-color: skyblue;
+    }
+
+    #gameboard{
+        margin: 25px auto;
+        display: grid;
+        grid-template-columns: 33% 33% 33%;
+        grid-template-rows: 33% 33% 33%;
+        max-width: 300px;
+    }
+
+    #gamespace{
+        padding: 20px 0;
 
 
-.notification{
-	margin:20px 0;
-	pading: 2px;
-	text-align: center;
+    }
+
+
+    .notification{
+    	margin:20px 0;
+    	pading: 2px;
+    	text-align: center;
+
+    }
+
+    #board-controls{
+        margin: 10px 46.5%;
+        
+    }
+
+    .board-btn{
+        height:35px;
+        width:70px;
+        font-size: 16px;
+        font-weight: bold;
+        border-style:none ;
+        border-radius:5px ;
+        cursor: pointer;
+    }
+
+    #start-btn{
+        background-color:rgb(11, 145, 200);
+        color: white;
+    }
+
+     #reset-btn{
+        background-color:rgb(216, 51, 67);
+        color: white;
+    }
+
+
 }

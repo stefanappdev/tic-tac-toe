@@ -186,7 +186,7 @@ const handleBoardUpdate=(id:number)=>{
 	const gameShouldContinue=():boolean=>{
 
 		/*stops the game if there's a winner or
-		if the game draws or continues unitl a winner is found*/
+		if the game draws or continues until a winner is found*/
 
 		if (!foundAWinner()&&gameDraw()){
 				
@@ -283,9 +283,13 @@ return <div id='gamespace'>
 
 	{<div id='gameboard'>{boardSquares}</div>}
 
-    {gameStart?<button onClick={handleReset}>reset</button>:""}
 
-    {!gameStart?<button onClick={handleStart}>start</button>:''}
+
+	<div id='board-controls'>
+	    {gameStart?<button className='board-btn' id='reset-btn' onClick={handleReset}>reset</button>:""}
+
+	    {!gameStart?<button className='board-btn' id='start-btn' onClick={handleStart}>start</button>:''}
+   </div>
 </div>
 
 }	

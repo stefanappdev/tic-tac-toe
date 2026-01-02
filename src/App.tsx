@@ -7,7 +7,7 @@ function App() {
 
   return (
     <>
-      <div>
+      <div id='App'>
           <h1>Have some fun, Play tic-tac-toe!</h1> 
            <Gameboard/>
       </div>
