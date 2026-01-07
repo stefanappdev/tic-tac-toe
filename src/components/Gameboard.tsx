@@ -1,4 +1,4 @@
-import {useState,useRef} from 'react'
+import {useState} from 'react'
 import '../styles/board.css'
 //import {Player} from './interfaces/Player.tsx'
 

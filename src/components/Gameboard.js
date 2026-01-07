@@ -1,45 +1,26 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
+const jsx_runtime_1 = require("react/jsx-runtime");
+const react_1 = require("react");
 require("../styles/board.css");
 //import {Player} from './interfaces/Player.tsx'
-var Gameboard = function () {
-    var X = {
+const Gameboard = () => {
+    let X = {
         symbol: 'X',
         squaresPlayed: [],
     };
-    var O = {
+    let O = {
         symbol: 'O',
         squaresPlayed: [],
     };
-    var _a = (0, react_1.useState)(false), gameStart = _a[0], setGameStart = _a[1];
-    var _b = (0, react_1.useState)(false), gameEnd = _b[0], setGameEnd = _b[1];
-    var _c = (0, react_1.useState)(false), displayMsg = _c[0], setDisplayMsg = _c[1];
-    var _d = (0, react_1.useState)(null), theWinner = _d[0], setTheWinner = _d[1];
-    var _e = (0, react_1.useState)(X), Xplayer = _e[0], setXPlayer = _e[1];
-    var _f = (0, react_1.useState)(O), Oplayer = _f[0], setOPlayer = _f[1];
-    var _g = (0, react_1.useState)(Xplayer), currentPlayer = _g[0], setCurrentPlayer = _g[1];
-    var _h = (0, react_1.useState)([
+    const [gameStart, setGameStart] = (0, react_1.useState)(false);
+    const [gameEnd, setGameEnd] = (0, react_1.useState)(false);
+    const [displayMsg, setDisplayMsg] = (0, react_1.useState)(false);
+    const [theWinner, setTheWinner] = (0, react_1.useState)(null);
+    const [Xplayer, setXPlayer] = (0, react_1.useState)(X);
+    const [Oplayer, setOPlayer] = (0, react_1.useState)(O);
+    const [currentPlayer, setCurrentPlayer] = (0, react_1.useState)(Xplayer);
+    const [squares, setSquares] = (0, react_1.useState)([
         {
             id: 1, data: ''
         },
@@ -67,8 +48,8 @@ var Gameboard = function () {
         {
             id: 9, data: ''
         },
-    ]), squares = _h[0], setSquares = _h[1];
-    var winningSets = [
+    ]);
+    let winningSets = [
         [1, 2, 3],
         [4, 5, 6],
         [7, 8, 9],
@@ -78,68 +59,70 @@ var Gameboard = function () {
         [2, 5, 8],
         [3, 6, 9]
     ];
-    var handleStart = function () {
+    const handleStart = () => {
         //controls action of game on startup
         setGameStart(true);
-        setDisplayMsg("Its ".concat(currentPlayer.symbol, "'s turn"));
+        setDisplayMsg(`Its ${currentPlayer.symbol}'s turn`);
     };
-    var changePlayerTurn = function () {
+    const changePlayerTurn = () => {
         //changes player turns 
         if (theWinner === null) {
             if (currentPlayer.symbol === 'O') {
                 setCurrentPlayer(Xplayer);
-                setDisplayMsg("Its X's turn");
+                setDisplayMsg(`Its X's turn`);
             }
             else if (currentPlayer.symbol === 'X') {
                 setCurrentPlayer(Oplayer);
-                setDisplayMsg("Its O's turn");
+                setDisplayMsg(`Its O's turn`);
             }
         }
     };
-    var congratulate = function () {
+    const congratulate = () => {
         //congratulates the winner
         if (theWinner !== null) {
-            setDisplayMsg("".concat(theWinner.symbol, " won"));
+            setDisplayMsg(`${theWinner.symbol} won`);
             setGameEnd(true);
         }
     };
-    var gameDraw = function () {
+    const gameDraw = () => {
         //checks for draw in a match
-        if (squares.every(function (sq) { return sq.data !== ''; }) && theWinner !== null) {
+        if (squares.every(sq => sq.data !== '')) {
             return true;
         }
         return false;
     };
-    var foundAWinner = function () {
+    const foundAWinner = () => {
         //checks for a winner if theres any
-        var foundwinner = false;
-        winningSets.forEach(function (winningSet) {
-            var matchedsquares = squares.filter(function (matchedsq) { return winningSet.includes(matchedsq.id); });
-            if (matchedsquares.every(function (matchedsq) { return matchedsq.data === 'O'; })) {
+        let foundwinner = false;
+        winningSets.forEach(winningSet => {
+            let matchedsquares = squares.filter(matchedsq => winningSet.includes(matchedsq.id));
+            if (matchedsquares.every(matchedsq => matchedsq.data === 'O')) {
                 foundwinner = true;
             }
-            else if (matchedsquares.every(function (matchedsq) { return matchedsq.data === 'X'; })) {
+            else if (matchedsquares.every(matchedsq => matchedsq.data === 'X')) {
                 foundwinner = true;
             }
         });
         return foundwinner;
     };
-    var handleReset = function () {
+    const handleReset = () => {
         //performs reset of game 
         setGameStart(false);
         setGameEnd(false);
         setDisplayMsg("");
         setCurrentPlayer(Xplayer);
         setTheWinner(null);
-        squares.forEach(function (square) {
+        squares.forEach(square => {
             square.data = '';
         });
-        setSquares(function (prevSquares) { return __spreadArray([], prevSquares, true); });
+        setSquares(prevSquares => [...prevSquares]);
     };
-    var handleBoardUpdate = function (id) {
+    const handleBoardUpdate = (id) => {
         //controls updating of square on tic-tac-toe board
         //allow players to play their symbols while game in progress
-        var gameShouldContinue = function () {
+        const gameShouldContinue = () => {
+            /*stops the game if there's a winner or
+            if the game draws or continues until a winner is found*/
             if (!foundAWinner() && gameDraw()) {
                 setDisplayMsg("it's a draw");
                 setGameEnd(true);
@@ -147,7 +130,7 @@ var Gameboard = function () {
                 return false;
             }
             else if (foundAWinner()) {
-                setDisplayMsg("".concat(currentPlayer.symbol, " wins"));
+                setDisplayMsg(`${currentPlayer.symbol} wins`);
                 setGameEnd(true);
                 setTheWinner(currentPlayer);
                 return false;
@@ -155,22 +138,22 @@ var Gameboard = function () {
             return true;
         };
         if (gameStart && !gameEnd) {
-            var square = squares.find(function (square) { return square.id === id; });
+            let square = squares.find(square => square.id === id);
             if (square.data === '') {
                 square.data = currentPlayer.symbol;
-                setSquares(function (prevSquares) { return __spreadArray([], prevSquares, true); });
+                setSquares(prevSquares => [...prevSquares]);
                 if (currentPlayer.symbol === 'X') {
                     changePlayerTurn();
-                    var newsquaresPlayed_1 = __spreadArray(__spreadArray([], currentPlayer.squaresPlayed, true), [square.id], false);
-                    setXPlayer(function (prevXplayer) {
-                        return __assign(__assign({}, prevXplayer), { squaresPlayed: newsquaresPlayed_1 });
+                    let newsquaresPlayed = [...currentPlayer.squaresPlayed, square.id];
+                    setXPlayer(prevXplayer => {
+                        return { ...prevXplayer, squaresPlayed: newsquaresPlayed };
                     });
                 }
                 else if (currentPlayer.symbol === 'O') {
                     changePlayerTurn();
-                    var newsquaresPlayed_2 = __spreadArray(__spreadArray([], currentPlayer.squaresPlayed, true), [square.id], false);
-                    setOPlayer(function (prevOplayer) {
-                        return __assign(__assign({}, prevOplayer), { squaresPlayed: newsquaresPlayed_2 });
+                    let newsquaresPlayed = [...currentPlayer.squaresPlayed, square.id];
+                    setOPlayer(prevOplayer => {
+                        return { ...prevOplayer, squaresPlayed: newsquaresPlayed };
                     });
                 }
             }
@@ -183,21 +166,9 @@ var Gameboard = function () {
             }
         }
     };
-    var boardSquares = squares.map(function (square) {
-        return <div key={square.id} onClick={function () { return handleBoardUpdate(square.id); }} className='boardsquare'>
- 		{square.data}		
-		</div>;
+    let boardSquares = squares.map(square => {
+        return (0, jsx_runtime_1.jsx)("div", { onClick: () => handleBoardUpdate(square.id), className: 'boardsquare', children: square.data }, square.id);
     });
-    return <div id='gamespace'>
-
- 
- 	{displayMsg ? <h1 className='notification'>{displayMsg}</h1> : ''}
-
-	{<div id='gameboard'>{boardSquares}</div>}
-
-    {gameStart ? <button onClick={handleReset}>reset</button> : ""}
-
-    {!gameStart ? <button onClick={handleStart}>start</button> : ''}
-    </div>;
+    return (0, jsx_runtime_1.jsxs)("div", { id: 'gamespace', children: [displayMsg ? (0, jsx_runtime_1.jsx)("h1", { className: 'notification', children: displayMsg }) : '', (0, jsx_runtime_1.jsx)("div", { id: 'gameboard', children: boardSquares }), (0, jsx_runtime_1.jsxs)("div", { id: 'board-controls', children: [gameStart ? (0, jsx_runtime_1.jsx)("button", { className: 'board-btn', id: 'reset-btn', onClick: handleReset, children: "reset" }) : "", !gameStart ? (0, jsx_runtime_1.jsx)("button", { className: 'board-btn', id: 'start-btn', onClick: handleStart, children: "start" }) : ''] })] });
 };
 exports.default = Gameboard;
